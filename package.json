@@ -1,0 +1,18 @@
+{
+  "name": "saasquatch-lead-prioritizer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LeadRank — lead prioritization & data-quality dashboard. Root manifest: supplies the serverless function in api/ with its runtime dependencies.",
+  "scripts": {
+    "build": "npm --prefix frontend ci && npm --prefix frontend run build",
+    "dev:api": "npm --prefix backend start",
+    "dev:web": "npm --prefix frontend run dev"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

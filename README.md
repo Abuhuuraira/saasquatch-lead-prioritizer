@@ -31,7 +31,7 @@ for a sales team already drowning in raw leads.
 | Email validation | Node `dns.resolveMx` (no paid API)  |
 | Caching          | In-memory TTL cache for MX lookups  |
 | Data (demo)      | JSON mock dataset                   |
-| Suggested hosting| Frontend: Vercel/Netlify · Backend: Render · DB: Supabase (Postgres) |
+| Hosting          | One Vercel project: static frontend + serverless API |
 
 ## Architecture
 
@@ -93,13 +93,56 @@ ranked call list. Or click **Import CSV** to score your own file (columns:
 | GET    | `/api/sample`  | —                        | `{ leads }` (raw)           |
 | POST   | `/api/score`   | `{ leads, icp? }`        | `{ stats, leads, icp }`     |
 
-## Deploy notes
+## Deploy
 
-- **Backend → Render:** new Web Service, root `backend/`, build `npm install`, start `npm start`.
-- **Frontend → Vercel/Netlify:** root `frontend/`, build `npm run build`, output `dist/`.
-  Set `VITE_API_URL` to your Render backend URL before building.
-- To make it production-grade, swap the JSON dataset for **Supabase (Postgres)** and
-  persist scored runs.
+The whole app ships as a **single Vercel project** — the React build is served as
+static files, and the same Express app runs behind it as a serverless function.
+One origin, so there is no CORS to configure and no second host to pay for.
+
+```
+api/index.js      ──exports──►  backend/app.js   (the Express app, no listener)
+backend/server.js ──listens──►  backend/app.js   (local development)
+```
+
+**Deploy from the GitHub repo (no CLI needed):**
+
+1. Go to [vercel.com/new](https://vercel.com/new) and import this repository.
+2. Leave every setting on its default — [`vercel.json`](vercel.json) already sets the
+   build command, the output directory (`frontend/dist`) and the `/api/*` rewrite.
+3. Click **Deploy**.
+
+**Or from your machine:**
+
+```bash
+npm i -g vercel
+vercel login
+vercel --prod
+```
+
+### Environment variables
+
+**None are required.** `VITE_API_URL` is optional and only overrides where the
+frontend looks for the API:
+
+| Context | `VITE_API_URL` | Frontend calls |
+|---|---|---|
+| Production (Vercel) | unset | `/api/...` on its own origin |
+| Local `npm run dev` | unset, or `frontend/.env` | `http://localhost:3001` |
+| Split hosting | set to the backend URL | that URL |
+
+Do not set `VITE_API_URL` on Vercel unless you are deliberately pointing the
+frontend at a backend hosted somewhere else.
+
+### One caveat on serverless
+
+The MX-lookup cache in [`backend/src/cache.js`](backend/src/cache.js) is per-instance
+memory. Serverless instances are recycled, so the cache warms up within a burst of
+requests but does not persist the way it does on a long-lived server — correctness is
+unaffected, only the number of repeat DNS lookups. Moving it to Vercel KV (or Redis)
+would make it durable.
+
+To make it production-grade beyond that, swap the JSON dataset for **Supabase
+(Postgres)** and persist scored runs.
 
 ## Ethical data note
 
