@@ -1,0 +1,7 @@
+companyName,domain,industry,employees,country,techStack,email,phone,revenue
+Acme Commerce,shopify.com,E-commerce,140,United States,Shopify|Stripe,sales@shopify.com,+1-415-555-0199,26000000
+NorthPeak Fintech,stripe.com,Fintech,260,United States,Stripe,hello@stripe.com,+1-415-555-0200,72000000
+LoneStar BBQ,lonestar-fake.zz,Food & Beverage,6,United States,,owner@lonestar-fake.zz,,300000
+Helix Health,github.com,Healthcare Tech,95,Canada,HubSpot,team@github.com,+1-604-555-0201,17000000
+Acme Commerce,shopify.com,E-commerce,140,United States,Shopify,sales@shopify.com,+1-415-555-0199,26000000
+EuroWidgets GmbH,eurowidgets-fake.xx,Manufacturing,3400,Germany,SAP,info@eurowidgets-fake.xx,+49-30-5550-9,600000000
